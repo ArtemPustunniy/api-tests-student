@@ -1,55 +1,103 @@
-# API-тесты для проекта https://testboard.avito.com/
+# API-тесты TestBoard
+
+Проект содержит позитивные и негативные API-тесты для [TestBoard](https://testboard.avito.com/) на Go. Новые сценарии лабораторной работы покрывают создание объявлений и работу с избранным. Код организован по слоям `Client → Manager → Scenario`.
+
+## Покрытые сценарии
+
+### Добавление объявления
+
+- создание объявления со всеми параметрами: название, описание, цена, количество и фотография;
+- получение созданного объявления по ID и сравнение переданных полей;
+- поиск по полному названию;
+- проверка загруженной фотографии через отдельную ручку;
+- ошибки для пустого названия, отсутствующего описания и фото, отрицательной цены и названия длиннее 50 символов;
+- запросы без токена и с неверным токеном.
+
+### Избранное
+
+- добавление объявления в избранное, проверка списка и удаление;
+- исчезновение объявления из избранного после удаления самого объявления;
+- добавление и удаление с несуществующим `ad_id`;
+- запросы к ручкам избранного без авторизации;
+- повторное добавление одного объявления;
+- попытка добавить собственное объявление.
+
+Каждый сценарий создаёт уникальные данные и очищает созданные объявления. Поэтому тесты можно запускать повторно с одинаковым результатом.
+
+## Требования
+
+- Go 1.25.1 или новее;
+- Git;
+- [golangci-lint](https://golangci-lint.run/docs/welcome/install/local/);
+- учётная запись TestBoard.
+
+## Настройка
+
+1. Склонируйте репозиторий и перейдите в его каталог:
+
+```bash
+git clone https://github.com/ArtemPustunniy/api-tests-student.git
+cd api-tests-student
+```
+
+2. Установите зависимости:
+
+```bash
+go mod download
+```
+
+3. Создайте в корне файл `.env.override`:
+
+```dotenv
+TEST_LOGIN=your_login
+TEST_PASSWORD=your_password
+DEBUG=false
+```
+
+Файл `.env.override` добавлен в `.gitignore` и не попадёт в репозиторий. Для вывода HTTP-запросов и ответов установите `DEBUG=true`.
+
+Если на компьютере настроен прокси и стенд не отвечает, добавьте в `.env.override`:
+
+```dotenv
+NO_PROXY=testboard.avito.com
+```
+
+## Запуск
+
+Все тесты:
+
+```bash
+go test -count=1 -v ./...
+```
+
+Только создание объявлений:
+
+```bash
+go test -count=1 -v ./tests/scenarios/advertisementCreation
+```
+
+Только избранное:
+
+```bash
+go test -count=1 -v ./tests/scenarios/favorites
+```
+
+Проверка трёх последовательных запусков:
+
+```bash
+go test -count=3 ./...
+```
+
+## Линтер
+
+```bash
+golangci-lint run
+```
+
+Успешная проверка завершается сообщением `0 issues`.
 
 ## Полезные ссылки
 
-1. [Swagger-спецификация](https://testboard.avito.com/swagger/index.html)
-2. [Техническое задание](https://docs.google.com/document/d/1IZ9SxEcePoQT6lyEmukycp1qNok4HZtok73UQnPwKSA/edit?usp=sharing)
-3. [Библиотека для написания API-тестов](https://github.com/steinfletcher/apitest)
-4. [Мощная библиотека анализа JSON для Go](https://github.com/tidwall/gjson)
-
-## Запуск тестов
-
-1. Установите любое IDE для разработки: [Jetbrains GoLand](https://www.jetbrains.com/ru-ru/go/) (Платное или по студенческой лицензии), [VS Code](https://code.visualstudio.com/) (бесплатное).
-2. Установите [Git](https://git-scm.com/install/) на компьютер
-3. [Установите](https://go.dev/doc/install) Go версии 1.25.1
-4. [Настройте](https://docs.github.com/ru/authentication/connecting-to-github-with-ssh) доступ к своему Github-аккаунту
-   по SSH-ключу.
-5. Склонируйте себе репозиторий: `git clone <путь к вашему репозиторию>`
-6. Подтяните необходимые зависимости через команду в корне проекта:
-
-```bash
-   go mod tidy
-```
-
-7. В файле `.env.override` (создайте его в корне, если нет) выставьте правильные значения для переменных окружения:
-
-```
-TEST_LOGIN=your_login
-TEST_PASSWORD=your_password
-```
-
-8. Для запуска всех тестов достаточно выполнить команду в корне проекта:
-
-```bash
-  go test -v ./...
-```
-
-9. Отдельный пакет с тестами можно запустить командой:
-
-```bash
-  go test -v ./tests/scenarios/myAdvertisement/
-```
-
-## Логирование
-
-Для включения логирования request/response в консоль: выставьте переменную окружения `DEBUG=true` в
-`.env.override`
-
-## Запуск линтера
-
-1. Установить приложение [golangci-lint](https://golangci-lint.run/docs/welcome/install/local/)
-2. Запуск линтера (из корня репозитория):
-
-```bash
-  golangci-lint run
-```
+- [Swagger TestBoard](https://testboard.avito.com/swagger/index.html)
+- [apitest](https://github.com/steinfletcher/apitest)
+- [testify](https://github.com/stretchr/testify)

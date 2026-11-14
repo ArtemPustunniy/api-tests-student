@@ -33,3 +33,20 @@ func Login(t *testing.T, username, password string) models.LoginOkResponse {
 
 	return loginResponse
 }
+
+// Register creates a user and returns the token and user data from the API.
+func Register(t *testing.T, request models.RegisterRequest) models.LoginOkResponse {
+	t.Helper()
+
+	registerRawResponse := auth.HttpPostAuthRegister(t, request)
+	defer registerRawResponse.Body.Close()
+
+	responseBody, err := io.ReadAll(registerRawResponse.Body)
+	require.NoError(t, err, "failed to read registration response")
+
+	registerResponse := models.LoginOkResponse{}
+	require.NoError(t, json.Unmarshal(responseBody, &registerResponse), "failed to decode registration response")
+	require.NotEmpty(t, registerResponse.Token, "registration response must contain a token")
+
+	return registerResponse
+}

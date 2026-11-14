@@ -21,3 +21,13 @@ func TearDownSuite() {
 func Precondition(text string) {
 	utils.LogWithLabelAndTimeStamp("Precondition", text)
 }
+
+// Step writes a test action to the console with a Step label.
+func Step(text string) {
+	utils.LogWithLabelAndTimeStamp("Step", text)
+}
+
+// Result writes a verified outcome to the console with a Result label.
+func Result(text string) {
+	utils.LogWithLabelAndTimeStamp("Result", text)
+}

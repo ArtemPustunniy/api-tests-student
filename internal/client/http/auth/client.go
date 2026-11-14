@@ -19,3 +19,13 @@ func HttpPostAuthLogin(t *testing.T, request authModels.LoginRequest) *http.Resp
 		Status(http.StatusOK).
 		End().Response
 }
+
+// HttpPostAuthRegister registers a user and returns the raw response.
+func HttpPostAuthRegister(t *testing.T, request authModels.RegisterRequest) *http.Response {
+	return apiRunner.GetRunner().Create().Post(path.AuthRegisterPath).
+		ContentType("application/json").
+		JSON(request).
+		Expect(t).
+		Status(http.StatusCreated).
+		End().Response
+}
